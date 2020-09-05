@@ -6,18 +6,15 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Rigidbody), typeof(Player))]
 public class Mover : InputControl
 {
-    [SerializeField] private Transform _helicopter;
-
-    [SerializeField] private float _force = 550;
-
+    [SerializeField] private Transform _transformHeli;
     [SerializeField] private float _rotationSpeed = 1.5f;
     [SerializeField] private float _maxTiltForwardBackward = 20;
     [SerializeField] private float _maxTiltAngleLeftToRight = 30;
-
     [SerializeField] private bool _isGround;
 
     public event UnityAction<float> ChangeCursor;
 
+    private Helicopter _helicopter;
     private float _backwardSpeed;
     private float _tiltSpeed;
     private float _idleSpeed;
@@ -55,11 +52,12 @@ public class Mover : InputControl
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _currentForwardSpeed = _force;
-
-        _backwardSpeed = _force /1.1f;
-        _tiltSpeed = _force / 1.5f;
-        _idleSpeed = _force / 2.5f;
+        _helicopter = GetComponent<Helicopter>();
+         
+        _currentForwardSpeed = _helicopter.EnginePower;
+        _backwardSpeed = _helicopter.EnginePower / 1.1f;
+        _tiltSpeed = _helicopter.EnginePower / 1.5f;
+        _idleSpeed = _helicopter.EnginePower / 2.5f;
     }
 
     private void Update()
@@ -88,7 +86,7 @@ public class Mover : InputControl
     {
         if (!_acceleration)
         {
-            _currentForwardSpeed = _force;
+            _currentForwardSpeed = _helicopter.EnginePower;
             _currentTiltSpeed = _tiltSpeed;
         }
 
@@ -106,7 +104,7 @@ public class Mover : InputControl
     private void Acceleration()
     {
         _acceleration = true;
-        _currentForwardSpeed = _force * 1.7f;
+        _currentForwardSpeed = _helicopter.EnginePower * 1.7f;
         _currentTiltSpeed = _tiltSpeed * 1.7f;
     }
     private void RotateHelicopter()
@@ -122,9 +120,9 @@ public class Mover : InputControl
             _tiltLeftToRight = 0;
 
         Quaternion rotationTarget = Quaternion.Euler(_tiltForwardBackward, 0, _tiltLeftToRight);
-        Quaternion rotation = Quaternion.Lerp(_helicopter.transform.localRotation, rotationTarget, Time.deltaTime * 2);
+        Quaternion rotation = Quaternion.Lerp(_transformHeli.transform.localRotation, rotationTarget, Time.deltaTime * 2);
 
-        _helicopter.transform.localRotation = rotation;
+        _transformHeli.transform.localRotation = rotation;
     }
     private void LookOnCursor()
     {
@@ -145,8 +143,8 @@ public class Mover : InputControl
     }
     private void GroundDistance()
     {
-        Ray hoverRay = new Ray(_helicopter.position, Vector3.down);
-        Debug.DrawRay(_helicopter.position, hoverRay.direction, Color.red);
+        Ray hoverRay = new Ray(_transformHeli.position, Vector3.down);
+        Debug.DrawRay(_transformHeli.position, hoverRay.direction, Color.red);
         RaycastHit hit;
         if (Physics.Raycast(hoverRay, out hit, 100f))
         {

@@ -33,8 +33,6 @@ public class ControlPropeller : InputControl
 
         _tailRotationRatio = _tailPropeller.GetComponent<Propeller>().RotationRatio;
         _tailRotationRatioStay = _tailPropeller.GetComponent<Propeller>().RotationRatioStay;
-
-
     }
 
 

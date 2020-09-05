@@ -12,6 +12,8 @@ public class InputControl : MonoBehaviour
 
     public event UnityAction PressShift;
     public event UnityAction<bool> StartAction;
+    public event UnityAction FireRocket;
+    public event UnityAction FireMachineGun;
 
     private void Update()
     {
@@ -31,5 +33,13 @@ public class InputControl : MonoBehaviour
 
         if (Input.GetKey(KeyCode.E))        
             StartAction?.Invoke(true);
+
+        if (Input.GetMouseButton(0))
+            FireMachineGun?.Invoke();
+
+        if (Input.GetMouseButton(1))
+            FireRocket?.Invoke();
+
+        
     }
 }
